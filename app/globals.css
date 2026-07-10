@@ -91,3 +91,13 @@ textarea {
 ::selection {
   background: rgba(34, 197, 139, 0.25);
 }
+
+/* Respeita o notch e a barra inferior do iPhone quando o app roda
+   em tela cheia (adicionado à tela de início). */
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}

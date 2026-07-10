@@ -5,7 +5,11 @@ import { LogOut, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
 
   useEffect(() => {
@@ -15,7 +19,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         router.push("/login");
         return;
       }
-      const { data: perfil } = await supabase.from("usuarios").select("papel").eq("id", user.id).single();
+      const { data: perfil } = await supabase
+        .from("usuarios")
+        .select("papel")
+        .eq("id", user.id)
+        .single();
       if (perfil?.papel !== "super_admin") router.push("/dashboard");
     });
   }, [router]);
@@ -28,11 +36,18 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-10 bg-base border-b border-primary/30 px-4 py-3 flex items-center justify-between">
+      <header className="sticky top-0 z-10 bg-canvas border-b border-primary/30 px-4 py-3 flex items-center justify-between safe-top">
         <span className="flex items-center gap-2 font-display font-bold text-ink">
-          <ShieldCheck size={20} className="text-primary" /> Cifra <span className="text-ink-muted font-mono text-sm tracking-widest uppercase">Admin</span>
+          <ShieldCheck size={20} className="text-primary" /> Cifra{" "}
+          <span className="text-ink-muted font-mono text-sm tracking-widest uppercase">
+            Admin
+          </span>
         </span>
-        <button onClick={sair} aria-label="Sair" className="flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition-colors">
+        <button
+          onClick={sair}
+          aria-label="Sair"
+          className="flex items-center gap-1 text-sm text-ink-muted hover:text-ink transition-colors"
+        >
           <LogOut size={18} /> Sair
         </button>
       </header>

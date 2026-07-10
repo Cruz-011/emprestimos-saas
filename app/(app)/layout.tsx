@@ -17,7 +17,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen pb-24">
-      <header className="sticky top-0 z-10 bg-canvas/95 backdrop-blur border-b border-surface-border px-4 py-3 flex items-center gap-2">
+      <header className="sticky top-0 z-10 bg-canvas/95 backdrop-blur border-b border-surface-border px-4 py-3 flex items-center gap-2 safe-top">
         <Image src="/logo.png" alt="Cifra Finance" width={28} height={28} className="rounded-md" />
         <h1 className="text-lg font-display font-bold text-ink">
           Cifra <span className="text-primary">Finance</span>
@@ -26,7 +26,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
 
       <main className="p-4 max-w-2xl mx-auto">{children}</main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-surface border-t border-surface-border flex justify-around py-2">
+      <nav className="fixed bottom-0 left-0 right-0 bg-surface border-t border-surface-border flex justify-around py-2 safe-bottom">
         {nav.map(({ href, label, icon: Icon }) => {
           const ativo = pathname === href;
           return (

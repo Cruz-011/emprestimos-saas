@@ -15,13 +15,20 @@ export default function LoginPage() {
     e.preventDefault();
     setErro("");
     const supabase = createClient();
-    const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password: senha,
+    });
     if (error || !data.user) {
       setErro("E-mail ou senha incorretos.");
       return;
     }
 
-    const { data: perfil } = await supabase.from("usuarios").select("papel, ativo").eq("id", data.user.id).single();
+    const { data: perfil } = await supabase
+      .from("usuarios")
+      .select("papel, ativo")
+      .eq("id", data.user.id)
+      .single();
     if (perfil && !perfil.ativo) {
       setErro("Seu acesso está bloqueado. Fale com o administrador.");
       await supabase.auth.signOut();
@@ -32,14 +39,25 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-canvas">
-      <form onSubmit={entrar} className="card w-full max-w-sm space-y-4 border-t-2 border-t-primary">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-canvas safe-top safe-bottom">     {" "}
+      <form
+        onSubmit={entrar}
+        className="card w-full max-w-sm space-y-4 border-t-2 border-t-primary"
+      >
         <div className="text-center space-y-1">
-          <Image src="/logo.png" alt="Cifra Finance" width={56} height={56} className="mx-auto rounded-xl mb-2" />
+          <Image
+            src="/logo.png"
+            alt="Cifra Finance"
+            width={56}
+            height={56}
+            className="mx-auto rounded-xl mb-2"
+          />
           <h1 className="text-2xl font-display font-bold text-ink">
             Cifra <span className="text-primary">Finance</span>
           </h1>
-          <p className="text-xs text-ink-faint font-mono uppercase tracking-widest">Gestão de empréstimos</p>
+          <p className="text-xs text-ink-faint font-mono uppercase tracking-widest">
+            Gestão de empréstimos
+          </p>
         </div>
         <input
           type="email"
@@ -58,7 +76,10 @@ export default function LoginPage() {
           onChange={(e) => setSenha(e.target.value)}
         />
         {erro && <p className="text-sm text-danger">{erro}</p>}
-        <button type="submit" className="btn-grande w-full bg-primary text-[#06140F] font-display">
+        <button
+          type="submit"
+          className="btn-grande w-full bg-primary text-[#06140F] font-display"
+        >
           Entrar
         </button>
       </form>
