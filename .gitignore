@@ -1,0 +1,42 @@
+
+
+# dependências
+/node_modules
+/.pnp
+.pnp.js
+
+# testes
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# produção
+/build
+
+# variáveis de ambiente (NUNCA subir chaves pro GitHub)
+.env
+.env*.local
+.env.production
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# cache diverso
+.cache
+*.tsbuildinfo
+
+# sistema operacional
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/*
+!.vscode/extensions.json
+.idea
+
+# Vercel
+.vercel
