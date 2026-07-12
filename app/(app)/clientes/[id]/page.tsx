@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Phone, Save } from "lucide-react";
+import { ArrowLeft, Phone, Save, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { calcularReputacao, type Reputacao } from "@/lib/reputacaoCliente";
 
@@ -87,6 +87,19 @@ export default function ClienteDetalhePage({ params }: { params: Promise<{ id: s
     setSalvando(false);
     setSalvo(true);
     setTimeout(() => setSalvo(false), 2000);
+  }
+
+  async function excluirCliente() {
+    const mensagem =
+      contratos.length > 0
+        ? `Esse cliente tem ${contratos.length} empréstimo(s) cadastrado(s). Excluir o cliente vai apagar TODO o histórico de empréstimos, parcelas e pagamentos dele também, e isso não pode ser desfeito. Quer mesmo excluir?`
+        : "Tem certeza que quer excluir esse cliente? Isso não pode ser desfeito.";
+    const confirmado = window.confirm(mensagem);
+    if (!confirmado) return;
+
+    const supabase = createClient();
+    await supabase.from("clientes").delete().eq("id", id);
+    router.push("/clientes");
   }
 
   if (!cliente) return <p className="text-sm text-ink-muted">Carregando...</p>;
@@ -175,6 +188,13 @@ export default function ClienteDetalhePage({ params }: { params: Promise<{ id: s
             className="btn-grande w-full bg-primary text-[#06140F] disabled:opacity-50"
           >
             <Save size={18} /> {salvando ? "Salvando..." : salvo ? "Salvo!" : "Salvar alterações"}
+          </button>
+
+          <button
+            onClick={excluirCliente}
+            className="btn-grande w-full border border-danger/40 text-danger text-sm py-3"
+          >
+            <Trash2 size={18} /> Excluir cliente
           </button>
         </div>
       ) : (

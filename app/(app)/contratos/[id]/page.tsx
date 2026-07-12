@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CheckCircle2, Clock, AlertTriangle, MessageCircle } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock, AlertTriangle, MessageCircle, Ban } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { useEmpresa } from "@/lib/useEmpresa";
 import { CampoMoeda } from "@/components/CampoMoeda";
@@ -107,6 +107,17 @@ export default function ContratoDetalhePage({ params }: { params: Promise<{ id: 
     carregar();
   }
 
+  async function cancelarEmprestimo() {
+    if (!contrato) return;
+    const confirmado = window.confirm(
+      "Tem certeza que quer cancelar esse empréstimo? Ele deixa de contar como dinheiro na rua e nos juros a receber, mas o histórico continua salvo."
+    );
+    if (!confirmado) return;
+    const supabase = createClient();
+    await supabase.from("contratos").update({ status: "cancelado" }).eq("id", contrato.id);
+    carregar();
+  }
+
   if (!contrato) return <p className="text-sm text-ink-muted">Carregando...</p>;
 
   return (
@@ -132,6 +143,15 @@ export default function ContratoDetalhePage({ params }: { params: Promise<{ id: 
           >
             <MessageCircle size={18} /> Falar no WhatsApp
           </a>
+        )}
+
+        {contrato.status !== "cancelado" && contrato.status !== "quitado" && (
+          <button
+            onClick={cancelarEmprestimo}
+            className="btn-grande w-full border border-danger/40 text-danger text-sm py-2 mt-2"
+          >
+            <Ban size={18} /> Cancelar empréstimo
+          </button>
         )}
       </div>
 
