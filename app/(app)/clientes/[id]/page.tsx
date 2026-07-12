@@ -10,6 +10,8 @@ type Cliente = {
   id: string;
   nome: string;
   cpf: string | null;
+  rg: string | null;
+  cnh: string | null;
   telefone: string | null;
   endereco: string | null;
   observacoes: string | null;
@@ -43,7 +45,7 @@ export default function ClienteDetalhePage({ params }: { params: Promise<{ id: s
     const supabase = createClient();
     const { data: c } = await supabase
       .from("clientes")
-      .select("id, nome, cpf, telefone, endereco, observacoes")
+      .select("id, nome, cpf, rg, cnh, telefone, endereco, observacoes")
       .eq("id", id)
       .single();
     setCliente(c);
@@ -79,6 +81,8 @@ export default function ClienteDetalhePage({ params }: { params: Promise<{ id: s
       .update({
         nome: cliente.nome,
         cpf: cliente.cpf,
+        rg: cliente.rg,
+        cnh: cliente.cnh,
         telefone: cliente.telefone,
         endereco: cliente.endereco,
         observacoes: cliente.observacoes,
@@ -98,7 +102,12 @@ export default function ClienteDetalhePage({ params }: { params: Promise<{ id: s
     if (!confirmado) return;
 
     const supabase = createClient();
-    await supabase.from("clientes").delete().eq("id", id);
+    const { error } = await supabase.from("clientes").delete().eq("id", id);
+    if (error) {
+      alert("Não foi possível excluir: " + error.message);
+      console.error(error);
+      return;
+    }
     router.push("/clientes");
   }
 
@@ -154,6 +163,18 @@ export default function ClienteDetalhePage({ params }: { params: Promise<{ id: s
           />
           <input
             className="w-full rounded-lg border border-surface-border bg-transparent px-4 py-3 text-base text-ink placeholder:text-ink-faint"
+            placeholder="RG"
+            value={cliente.rg ?? ""}
+            onChange={(e) => setCliente({ ...cliente, rg: e.target.value })}
+          />
+          <input
+            className="w-full rounded-lg border border-surface-border bg-transparent px-4 py-3 text-base text-ink placeholder:text-ink-faint"
+            placeholder="CNH"
+            value={cliente.cnh ?? ""}
+            onChange={(e) => setCliente({ ...cliente, cnh: e.target.value })}
+          />
+          <input
+            className="w-full rounded-lg border border-surface-border bg-transparent px-4 py-3 text-base text-ink placeholder:text-ink-faint"
             placeholder="Telefone (com DDD)"
             value={cliente.telefone ?? ""}
             onChange={(e) => setCliente({ ...cliente, telefone: e.target.value })}
@@ -173,7 +194,7 @@ export default function ClienteDetalhePage({ params }: { params: Promise<{ id: s
           />
 
           {cliente.telefone && (
-            <a
+              <a
               href={`https://wa.me/${cliente.telefone}`}
               target="_blank"
               className="btn-grande w-full border border-surface-border text-ink text-sm py-3"
