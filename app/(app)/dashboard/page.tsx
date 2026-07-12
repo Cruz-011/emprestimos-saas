@@ -155,13 +155,13 @@ export default function DashboardPage() {
           href="/contratos/novo"
           className="btn-grande flex-col bg-primary text-[#06140F] text-xs py-3 gap-1"
         >
-          <Plus size={20} /> Empréstimo
+          <Plus size={20} /> Novo empréstimo
         </a>
         <a
           href="/clientes/novo"
           className="btn-grande flex-col border border-surface-border text-ink text-xs py-3 gap-1"
         >
-          <UserPlus size={20} /> Cliente
+          <UserPlus size={20} /> Novo cliente
         </a>
         <a
           href="/calculadora"
