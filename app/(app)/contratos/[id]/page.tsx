@@ -4,7 +4,7 @@ import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Clock, AlertTriangle, MessageCircle, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
-import { useEmpresa } from "@/lib/useEmpresa";
+import { useEmpresa } from "@/hooks/useEmpresa";
 import { CampoMoeda } from "@/components/CampoMoeda";
 import { componentesDaParcela, pendenciaParcela } from "@/lib/calculoEmprestimo";
 import { MENSAGEM_PADRAO, montarMensagem, linkWhatsApp } from "@/lib/mensagemCobranca";

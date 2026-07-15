@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Save, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase";
-import { useEmpresa } from "@/lib/useEmpresa";
+import { useEmpresa } from "@/hooks/useEmpresa";
 import { MENSAGEM_PADRAO, montarMensagem } from "@/lib/mensagemCobranca";
 
 export default function ConfiguracoesPage() {

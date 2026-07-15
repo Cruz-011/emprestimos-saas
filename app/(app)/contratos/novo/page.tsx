@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft, Search, Check } from "lucide-react";
 import { createClient } from "@/lib/supabase";
-import { useEmpresa } from "@/lib/useEmpresa";
+import { useEmpresa } from "@/hooks/useEmpresa";
 import { CampoMoeda } from "@/components/CampoMoeda";
 import {
   calcularEmprestimo,

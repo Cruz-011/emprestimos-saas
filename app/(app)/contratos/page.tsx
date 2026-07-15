@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Plus, MessageCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase";
-import { useEmpresa } from "@/lib/useEmpresa";
+import { useEmpresa } from "@/hooks/useEmpresa";
 import { descreverVencimento } from "@/lib/datas";
 import { calcularPendenciasContrato, type Modalidade } from "@/lib/calculoEmprestimo";
 import { MENSAGEM_PADRAO, montarMensagem, linkWhatsApp } from "@/lib/mensagemCobranca";

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase";
-import { useEmpresa } from "@/lib/useEmpresa";
+import { useEmpresa } from "@/hooks/useEmpresa";
 
 export default function NovoClientePage() {
   const router = useRouter();
@@ -24,7 +24,10 @@ export default function NovoClientePage() {
 
   async function salvar(e: React.FormEvent) {
     e.preventDefault();
-    if (!empresaId) return;
+    if (!empresaId) {
+      setErro("Não foi possível identificar sua empresa. Saia e entre de novo na conta e tente outra vez.");
+      return;
+    }
     setSalvando(true);
     setErro("");
 

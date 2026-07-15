@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Home, Users, FileText, Calculator, Settings } from "lucide-react";
+import { useEmpresa } from "@/hooks/useEmpresa";
+import { createClient } from "@/lib/supabase";
 
 const nav = [
   { href: "/dashboard", label: "Início", icon: Home },
@@ -15,6 +18,36 @@ const nav = [
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { usuario, carregando, sessaoInvalida } = useEmpresa();
+
+  useEffect(() => {
+    if (carregando) return;
+    if (sessaoInvalida) {
+      const supabase = createClient();
+      supabase.auth.signOut().finally(() => router.replace("/login"));
+      return;
+    }
+    if (usuario?.papel === "super_admin") {
+      router.replace("/admin");
+    }
+  }, [carregando, sessaoInvalida, usuario, router]);
+
+  if (carregando) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-canvas">
+        <p className="text-sm text-ink-muted">Carregando...</p>
+      </div>
+    );
+  }
+
+  if (sessaoInvalida || usuario?.papel === "super_admin") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-canvas">
+        <p className="text-sm text-ink-muted">Redirecionando...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen pb-24">

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { AlertTriangle, Wallet, MessageCircle, Plus, UserPlus, Calculator, CalendarClock } from "lucide-react";
 import { createClient } from "@/lib/supabase";
-import { useEmpresa } from "@/lib/useEmpresa";
+import { useEmpresa } from "@/hooks/useEmpresa";
 import {
   calcularPendenciasContrato,
   componentesDaParcela,

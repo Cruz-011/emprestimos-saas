@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Manrope, Inter, JetBrains_Mono } from "next/font/google";
+import { EmpresaProvider } from "@/contexts/EmpresaContext";
 import "./globals.css";
 
 const manrope = Manrope({
@@ -35,6 +36,7 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
 };
+
 export default function RootLayout({
   children,
 }: {
@@ -45,7 +47,9 @@ export default function RootLayout({
       lang="pt-BR"
       className={`${manrope.variable} ${inter.variable} ${mono.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <EmpresaProvider>{children}</EmpresaProvider>
+      </body>
     </html>
   );
 }

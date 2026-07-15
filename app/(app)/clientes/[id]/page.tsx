@@ -8,7 +8,7 @@ import { calcularReputacao, type Reputacao } from "@/lib/reputacaoCliente";
 import { calcularPendenciasContrato, componentesDaParcela, pendenciaParcela, type Modalidade } from "@/lib/calculoEmprestimo";
 import { MENSAGEM_PADRAO, montarMensagem, linkWhatsApp } from "@/lib/mensagemCobranca";
 import { descreverVencimento } from "@/lib/datas";
-import { useEmpresa } from "@/lib/useEmpresa";
+import { useEmpresa } from "@/hooks/useEmpresa";
 
 type Cliente = {
   id: string;
