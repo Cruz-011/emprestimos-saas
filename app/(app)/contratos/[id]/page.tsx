@@ -8,6 +8,7 @@ import { useEmpresa } from "@/lib/useEmpresa";
 import { CampoMoeda } from "@/components/CampoMoeda";
 import { componentesDaParcela, pendenciaParcela } from "@/lib/calculoEmprestimo";
 import { MENSAGEM_PADRAO, montarMensagem, linkWhatsApp } from "@/lib/mensagemCobranca";
+import { descreverVencimento } from "@/lib/datas";
 
 type Parcela = {
   id: string;
@@ -184,6 +185,11 @@ export default function ContratoDetalhePage({ params }: { params: Promise<{ id: 
         <p className="text-sm text-ink-muted">
           {nomeModalidade[contrato.modalidade]} · {contrato.numero_parcelas}x · {contrato.taxa_juros}% {nomePeriodicidade[contrato.periodicidade]} · status {contrato.status}
         </p>
+        {proximaPendente && (
+          <p className={`text-sm font-medium ${descreverVencimento(proximaPendente.data_vencimento).classe}`}>
+            {descreverVencimento(proximaPendente.data_vencimento).texto}
+          </p>
+        )}
         {linkCobranca && (
           <a
             href={linkCobranca}

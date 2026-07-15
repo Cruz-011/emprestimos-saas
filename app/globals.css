@@ -2,90 +2,68 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Camada de segurança em CSS puro — garante fundo escuro e letra clara
-   mesmo se, por algum motivo, as cores customizadas do Tailwind não
-   carregarem. Tudo abaixo usa valores fixos, sem depender de config. */
-html {
-  color-scheme: dark;
-  background-color: #0a0c0f;
+@layer base {
+  /* Camada de segurança em CSS puro — garante fundo escuro e letra clara
+     mesmo se, por algum motivo, as cores customizadas do Tailwind não
+     carregarem. Tudo abaixo usa valores fixos, sem depender de config. */
+  html {
+    color-scheme: dark;
+    background-color: #0A0C0F;
+  }
+
+  body {
+    background-color: #0A0C0F;
+    color: #ECEFF3;
+    font-size: 16px;
+    background-image: radial-gradient(circle at 20% 0%, rgba(34, 197, 139, 0.06), transparent 40%);
+    background-attachment: fixed;
+  }
+
+  input, select, textarea {
+    color: #ECEFF3;
+  }
+
+  input::placeholder, textarea::placeholder {
+    color: #5B6472;
+  }
+
+  /* O Chrome (e outros navegadores) força fundo branco/amarelo e texto preto
+     quando autocompleta um campo, ignorando o CSS normal — isso é o que
+     normalmente faz o texto digitado "sumir" num tema escuro. */
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus {
+    -webkit-text-fill-color: #ECEFF3 !important;
+    -webkit-box-shadow: 0 0 0 1000px #12151B inset !important;
+    caret-color: #ECEFF3;
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
+  h1, h2, h3, p, span, label, li, a, button {
+    color: inherit;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display), sans-serif;
+  }
 }
 
-body {
-  background-color: #0a0c0f;
-  color: #eceff3;
-}
+/* Componentes customizados dentro de @layer: assim qualquer utilitário do
+   Tailwind (text-sm, py-2 etc.) escrito junto sempre tem prioridade sobre
+   essas classes — sem isso, botões ficavam com tamanho errado dependendo
+   de onde eram usados, porque o CSS delas "vencia" o utilitário por engano. */
+@layer components {
+  .money {
+    @apply font-mono tabular-nums tracking-tight;
+  }
 
-input,
-select,
-textarea {
-  color: #eceff3;
-}
+  .btn-grande {
+    @apply flex items-center justify-center gap-2 rounded-xl px-5 py-4 text-lg font-semibold shadow-sm active:scale-[0.98] transition-transform;
+  }
 
-input::placeholder,
-textarea::placeholder {
-  color: #5b6472;
-}
-
-/* O Chrome (e outros navegadores) força fundo branco/amarelo e texto preto
-   quando autocompleta um campo, ignorando o CSS normal — isso é o que
-   normalmente faz o texto digitado "sumir" num tema escuro. */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus {
-  -webkit-text-fill-color: #eceff3 !important;
-  -webkit-box-shadow: 0 0 0 1000px #12151b inset !important;
-  caret-color: #eceff3;
-  transition: background-color 9999s ease-in-out 0s;
-}
-
-h1,
-h2,
-h3,
-p,
-span,
-label,
-li,
-a,
-button {
-  color: inherit;
-}
-/* fim da camada de segurança */
-
-body {
-  @apply bg-canvas text-ink font-sans;
-  font-size: 16px;
-  background-image: radial-gradient(
-    circle at 20% 0%,
-    rgba(34, 197, 139, 0.06),
-    transparent 40%
-  );
-  background-attachment: fixed;
-}
-
-h1,
-h2,
-h3 {
-  @apply font-display;
-}
-
-/* Números de dinheiro sempre em mono, com espaçamento tabular — 
-   é o elemento assinatura do app: qualquer valor em R$ tem essa "cara de ficha". */
-.money {
-  @apply font-mono tabular-nums tracking-tight;
-}
-
-.btn-grande {
-  @apply flex items-center justify-center gap-2 rounded-xl px-5 py-4 text-lg font-semibold shadow-sm active:scale-[0.98] transition-transform;
-}
-
-.card {
-  @apply rounded-2xl bg-surface border border-surface-border p-4;
-}
-
-input,
-select,
-textarea {
-  @apply text-ink placeholder:text-ink-faint;
+  .card {
+    @apply rounded-2xl bg-surface border border-surface-border p-4;
+  }
 }
 
 ::selection {

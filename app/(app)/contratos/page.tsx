@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Plus, MessageCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { useEmpresa } from "@/lib/useEmpresa";
+import { descreverVencimento } from "@/lib/datas";
 import { calcularPendenciasContrato, type Modalidade } from "@/lib/calculoEmprestimo";
 import { MENSAGEM_PADRAO, montarMensagem, linkWhatsApp } from "@/lib/mensagemCobranca";
 
@@ -123,6 +124,11 @@ export default function ContratosPage() {
                   <p className="font-medium text-ink">{c.clientes?.nome ?? "Cliente"}</p>
                   <p className="text-sm text-ink-muted money">R$ {c.valor_emprestado.toLocaleString("pt-BR")}</p>
                   <p className="text-xs text-ink-faint">{nomeModalidadeCurto[c.modalidade]}</p>
+                  {c.proximoVencimento && c.status !== "quitado" && c.status !== "cancelado" && (
+                    <p className={`text-xs mt-1 ${descreverVencimento(c.proximoVencimento).classe}`}>
+                      {descreverVencimento(c.proximoVencimento).texto}
+                    </p>
+                  )}
                 </div>
                 <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusCor[c.status]}`}>
                   {c.status}

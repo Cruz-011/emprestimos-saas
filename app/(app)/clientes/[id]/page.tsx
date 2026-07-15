@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase";
 import { calcularReputacao, type Reputacao } from "@/lib/reputacaoCliente";
 import { calcularPendenciasContrato, componentesDaParcela, pendenciaParcela, type Modalidade } from "@/lib/calculoEmprestimo";
 import { MENSAGEM_PADRAO, montarMensagem, linkWhatsApp } from "@/lib/mensagemCobranca";
+import { descreverVencimento } from "@/lib/datas";
 import { useEmpresa } from "@/lib/useEmpresa";
 
 type Cliente = {
@@ -339,6 +340,11 @@ export default function ClienteDetalhePage({ params }: { params: Promise<{ id: s
                       {c.status}
                     </span>
                   </div>
+                  {c.proximoVencimento && c.status !== "quitado" && c.status !== "cancelado" && (
+                    <p className={`text-xs ${descreverVencimento(c.proximoVencimento).classe}`}>
+                      {descreverVencimento(c.proximoVencimento).texto}
+                    </p>
+                  )}
                   <div className="grid grid-cols-2 gap-2 text-sm pt-2 border-t border-surface-border">
                     <div>
                       <p className="text-xs text-ink-faint">Juros total</p>
