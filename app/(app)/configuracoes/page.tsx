@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, Save, LogOut } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { useEmpresa } from "@/lib/useEmpresa";
 import { MENSAGEM_PADRAO, montarMensagem } from "@/lib/mensagemCobranca";
@@ -41,6 +41,12 @@ export default function ConfiguracoesPage() {
     setSalvando(false);
     setSalvo(true);
     setTimeout(() => setSalvo(false), 2000);
+  }
+
+  async function sair() {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/login");
   }
 
   const preview = montarMensagem(mensagem, {
@@ -102,6 +108,13 @@ export default function ConfiguracoesPage() {
             className="btn-grande w-full bg-primary text-[#06140F] disabled:opacity-50"
           >
             <Save size={18} /> {salvando ? "Salvando..." : salvo ? "Salvo!" : "Salvar"}
+          </button>
+
+          <button
+            onClick={sair}
+            className="btn-grande w-full border border-surface-border text-ink-muted text-sm py-3"
+          >
+            <LogOut size={18} /> Sair da conta
           </button>
         </>
       )}
