@@ -3,13 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Home, Users, FileText, Calculator } from "lucide-react";
+import { Home, Users, FileText, Calculator, Settings } from "lucide-react";
 
 const nav = [
   { href: "/dashboard", label: "Início", icon: Home },
   { href: "/clientes", label: "Clientes", icon: Users },
   { href: "/contratos", label: "Empréstimos", icon: FileText },
-  { href: "/calculadora", label: "Calculadora", icon: Calculator },
+  { href: "/calculadora", label: "Calc.", icon: Calculator },
+  { href: "/configuracoes", label: "Config.", icon: Settings },
 ];
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {

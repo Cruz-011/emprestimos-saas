@@ -2,10 +2,12 @@
 
 import { useEffect, useState, use } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, CheckCircle2, Clock, AlertTriangle, MessageCircle, Ban } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Clock, AlertTriangle, MessageCircle, Trash2 } from "lucide-react";
 import { createClient } from "@/lib/supabase";
 import { useEmpresa } from "@/lib/useEmpresa";
 import { CampoMoeda } from "@/components/CampoMoeda";
+import { componentesDaParcela, pendenciaParcela } from "@/lib/calculoEmprestimo";
+import { MENSAGEM_PADRAO, montarMensagem, linkWhatsApp } from "@/lib/mensagemCobranca";
 
 type Parcela = {
   id: string;
@@ -64,7 +66,7 @@ const estilos: Record<Parcela["status"], { cor: string; icone: any; label: strin
 export default function ContratoDetalhePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
-  const { usuarioId } = useEmpresa();
+  const { usuarioId, empresaId } = useEmpresa();
 
   const [contrato, setContrato] = useState<Contrato | null>(null);
   const [parcelas, setParcelas] = useState<Parcela[]>([]);
@@ -72,6 +74,9 @@ export default function ContratoDetalhePage({ params }: { params: Promise<{ id: 
   const [valorPagamento, setValorPagamento] = useState(0);
   const [forma, setForma] = useState("Pix");
   const [salvando, setSalvando] = useState(false);
+  const [excluindo, setExcluindo] = useState(false);
+  const [mensagemTemplate, setMensagemTemplate] = useState(MENSAGEM_PADRAO);
+  const [chavePix, setChavePix] = useState("");
 
   async function carregar() {
     const supabase = createClient();
@@ -86,6 +91,20 @@ export default function ContratoDetalhePage({ params }: { params: Promise<{ id: 
   useEffect(() => {
     carregar();
   }, [id]);
+
+  useEffect(() => {
+    if (!empresaId) return;
+    const supabase = createClient();
+    supabase
+      .from("configuracoes")
+      .select("mensagem_cobranca, chave_pix")
+      .eq("empresa_id", empresaId)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.mensagem_cobranca) setMensagemTemplate(data.mensagem_cobranca);
+        if (data?.chave_pix) setChavePix(data.chave_pix);
+      });
+  }, [empresaId]);
 
   function abrirRegistro(p: Parcela) {
     setParcelaAberta(p.id);
@@ -107,18 +126,48 @@ export default function ContratoDetalhePage({ params }: { params: Promise<{ id: 
     carregar();
   }
 
-  async function cancelarEmprestimo() {
+  async function excluirEmprestimo() {
     if (!contrato) return;
     const confirmado = window.confirm(
-      "Tem certeza que quer cancelar esse empréstimo? Ele deixa de contar como dinheiro na rua e nos juros a receber, mas o histórico continua salvo."
+      "Isso vai apagar esse empréstimo e TODAS as parcelas e pagamentos dele pra sempre. Não tem como desfazer. Tem certeza?"
     );
     if (!confirmado) return;
+    setExcluindo(true);
     const supabase = createClient();
-    await supabase.from("contratos").update({ status: "cancelado" }).eq("id", contrato.id);
-    carregar();
+    const { error } = await supabase.from("contratos").delete().eq("id", contrato.id);
+    setExcluindo(false);
+    if (error) {
+      alert("Não foi possível excluir: " + error.message);
+      return;
+    }
+    router.push("/contratos");
   }
 
   if (!contrato) return <p className="text-sm text-ink-muted">Carregando...</p>;
+
+  const proximaPendente = parcelas.find((p) => p.status !== "pago");
+  let linkCobranca: string | null = null;
+  if (contrato.clientes?.telefone && proximaPendente) {
+    const { valorJuros, valorPrincipal } = componentesDaParcela(
+      contrato.modalidade,
+      contrato.valor_emprestado,
+      contrato.taxa_juros,
+      contrato.numero_parcelas,
+      proximaPendente
+    );
+    const pend = pendenciaParcela(valorJuros, valorPrincipal, proximaPendente.valor_pago ?? 0);
+    const total = proximaPendente.valor - (proximaPendente.valor_pago ?? 0);
+    linkCobranca = linkWhatsApp(
+      contrato.clientes.telefone,
+      montarMensagem(mensagemTemplate, {
+        nome: contrato.clientes.nome,
+        total: total.toLocaleString("pt-BR"),
+        juros: pend.jurosPendente.toLocaleString("pt-BR"),
+        data: new Date(proximaPendente.data_vencimento + "T00:00:00").toLocaleDateString("pt-BR"),
+        pix: chavePix,
+      })
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -135,24 +184,23 @@ export default function ContratoDetalhePage({ params }: { params: Promise<{ id: 
         <p className="text-sm text-ink-muted">
           {nomeModalidade[contrato.modalidade]} · {contrato.numero_parcelas}x · {contrato.taxa_juros}% {nomePeriodicidade[contrato.periodicidade]} · status {contrato.status}
         </p>
-        {contrato.clientes?.telefone && (
+        {linkCobranca && (
           <a
-            href={`https://wa.me/${contrato.clientes.telefone}`}
+            href={linkCobranca}
             target="_blank"
             className="btn-grande bg-primary text-white text-sm py-2 mt-2 inline-flex"
           >
-            <MessageCircle size={18} /> Falar no WhatsApp
+            <MessageCircle size={18} /> Cobrar no WhatsApp
           </a>
         )}
 
-        {contrato.status !== "cancelado" && contrato.status !== "quitado" && (
-          <button
-            onClick={cancelarEmprestimo}
-            className="btn-grande w-full border border-danger/40 text-danger text-sm py-2 mt-2"
-          >
-            <Ban size={18} /> Cancelar empréstimo
-          </button>
-        )}
+        <button
+          onClick={excluirEmprestimo}
+          disabled={excluindo}
+          className="btn-grande w-full border border-danger/40 text-danger text-sm py-2 mt-2 disabled:opacity-50"
+        >
+          <Trash2 size={18} /> {excluindo ? "Excluindo..." : "Excluir empréstimo"}
+        </button>
       </div>
 
       <div>
